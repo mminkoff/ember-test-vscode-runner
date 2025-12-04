@@ -97,12 +97,13 @@ export function activate(context: vscode.ExtensionContext) {
 		const config = vscode.workspace.getConfiguration('emberTestRunner');
 		const testRunnerBaseUrl = config.get('testRunnerBaseUrl', 'http://localhost:4200/tests');
 		const hidePassed = config.get('hidePassed', true);
+		const includeFile = config.get('includeFile', true);
 		const fileName = filePath.split('/').pop() || '';
 		
 		const queryParams = [];
 		if (hidePassed) queryParams.push('hidepassed');
 		queryParams.push(`filter=${encodeURIComponent(filter)}`);
-		queryParams.push(`file=${encodeURIComponent(fileName)}`);
+		if (includeFile) queryParams.push(`file=${encodeURIComponent(fileName)}`);
 		
 		return `${testRunnerBaseUrl}?${queryParams.join('&')}`;
 	}
