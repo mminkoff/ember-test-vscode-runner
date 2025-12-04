@@ -92,24 +92,39 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.languages.registerCodeLensProvider(selector, codeLensProvider)
 	);
 	
+	// Helper function to build test runner URL
+	function buildTestRunnerUrl(filter: string, filePath: string): string {
+		const config = vscode.workspace.getConfiguration('emberTestRunner');
+		const testRunnerBaseUrl = config.get('testRunnerBaseUrl', 'http://localhost:4200/tests');
+		const hidePassed = config.get('hidePassed', true);
+		const fileName = filePath.split('/').pop() || '';
+		
+		const queryParams = [];
+		if (hidePassed) queryParams.push('hidepassed');
+		queryParams.push(`filter=${encodeURIComponent(filter)}`);
+		queryParams.push(`file=${encodeURIComponent(fileName)}`);
+		
+		return `${testRunnerBaseUrl}?${queryParams.join('&')}`;
+	}
+	
 	// Register commands
 	context.subscriptions.push(
-			vscode.commands.registerCommand('ember-test-runner.runModuleTests', (moduleName: string) => {
+			vscode.commands.registerCommand('ember-test-runner.runModuleTests', (moduleName: string, filePath: string) => {
 					// moduleName already contains the full path with nested modules joined by " > "
-					const testRunnerBaseUrl = vscode.workspace.getConfiguration('emberTestRunner').get('testRunnerBaseUrl', 'http://localhost:4200/tests');
-					const url = `${testRunnerBaseUrl}?hidepassed&filter=${encodeURIComponent(moduleName)}`;
-					log(`Running module tests for ${moduleName} at ${url}`, 'debug');
+					const fileName = filePath.split('/').pop() || '';
+					const url = buildTestRunnerUrl(moduleName, filePath);
+					log(`Running module tests for ${moduleName} from file ${fileName} at ${url}`, 'debug');
 					vscode.env.openExternal(vscode.Uri.parse(url));
 			})
 	);
 	
 	context.subscriptions.push(
-			vscode.commands.registerCommand('ember-test-runner.runSingleTest', (moduleName: string, testName: string) => {
+			vscode.commands.registerCommand('ember-test-runner.runSingleTest', (moduleName: string, testName: string, filePath: string) => {
 					// Use the full module path (including parent modules) for uniqueness
-					const testRunnerBaseUrl = vscode.workspace.getConfiguration('emberTestRunner').get('testRunnerBaseUrl', 'http://localhost:4200`/tests');
 					const filter = `${moduleName}: ${testName}`;
-					const url = `${testRunnerBaseUrl}?hidepassed&filter=${encodeURIComponent(filter)}`;
-					log(`Running test "${testName}" in module "${moduleName}" with filter: ${filter}`, 'debug');
+					const fileName = filePath.split('/').pop() || '';
+					const url = buildTestRunnerUrl(filter, filePath);
+					log(`Running test "${testName}" in module "${moduleName}" from file ${fileName} with filter: ${filter}`, 'debug');
 					vscode.env.openExternal(vscode.Uri.parse(url));
 			})
 	);
@@ -180,7 +195,7 @@ class EmberTestCodeLensProvider implements vscode.CodeLensProvider {
 					moduleInfo.position,
 					"▶ Run Module Tests",
 					"ember-test-runner.runModuleTests",
-					[moduleInfo.name]
+					[moduleInfo.name, document.fileName]
 				));
 			}
 			
@@ -198,7 +213,7 @@ class EmberTestCodeLensProvider implements vscode.CodeLensProvider {
 						testInfo.position,
 						"▶ Run Test",
 						"ember-test-runner.runSingleTest",
-						[moduleName, testName]
+						[moduleName, testName, document.fileName]
 					));
 				}
 			}

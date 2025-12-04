@@ -43,6 +43,11 @@
           "type": "string",
           "default": "http://localhost:4200/tests",
           "description": "Base URL for the Ember test runner"
+        },
+        "emberTestRunner.hidePassed": {
+          "type": "boolean",
+          "default": true,
+          "description": "Add 'hidepassed' query parameter to hide passing tests in the test runner"
         }
       }
     }
