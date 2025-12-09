@@ -1,14 +1,14 @@
 {
-  "name": "ember-test-runner",
+  "name": "auditboard-ember-test-runner",
   "icon": "assets/logo.png",
-  "displayName": "Ember Test Runner",
-  "description": "Run Ember tests directly from VSCode",
-  "publisher": "chunfattai",
+  "displayName": "AuditBoard Ember Test Runner",
+  "description": "Run Ember tests directly from VSCode, exclusive for AuditBoard projects.",
+  "publisher": "auditboard",
   "repository": {
     "type": "git",
     "url": "https://github.com/chunfat/ember-test-vscode-runner.git"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.104.0"
   },
@@ -27,12 +27,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "ember-test-runner.toggleDebug",
-        "title": "Ember Test Runner: Toggle Debug Mode"
+        "command": "auditboard-ember-test-runner.toggleDebug",
+        "title": "AuditBoard Ember Test Runner: Toggle Debug Mode"
       }
     ],
     "configuration": {
-      "title": "Ember Test Runner",
+      "title": "AuditBoard Ember Test Runner",
       "properties": {
         "emberTestRunner.debug": {
           "type": "boolean",
@@ -41,8 +41,8 @@
         },
         "emberTestRunner.testRunnerBaseUrl": {
           "type": "string",
-          "default": "http://localhost:4200/tests",
-          "description": "Base URL for the Ember test runner"
+          "default": "http://localhost:9002/tests/index.html",
+          "description": "Base URL for the AuditBoard Ember test runner"
         },
         "emberTestRunner.hidePassed": {
           "type": "boolean",
@@ -51,7 +51,7 @@
         },
         "emberTestRunner.includeFile": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Add 'file' query parameter with the test file name to the test runner URL"
         }
       }
