@@ -47,7 +47,7 @@ function log(message: string, level: 'info' | 'error' | 'debug' = 'info'): void 
 // This function activates the extension
 export function activate(context: vscode.ExtensionContext) {
 	// Create output channel
-	outputChannel = vscode.window.createOutputChannel('Ember Test Runner');
+	outputChannel = vscode.window.createOutputChannel('AuditBoard Ember Test Runner');
 	context.subscriptions.push(outputChannel);
 	
 	// Get global storage path and ensure it exists
@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 	
 	// Get settings
-	const config = vscode.workspace.getConfiguration('emberTestRunner');
+	const config = vscode.workspace.getConfiguration('auditBoardEmberTestRunner');
 	debugMode = config.get('debug', false);
 	
 	log(`Ember Test Runner is now active (Debug: ${debugMode ? 'enabled' : 'disabled'})`);
@@ -94,8 +94,8 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	// Helper function to build test runner URL
 	function buildTestRunnerUrl(filter: string, filePath: string): string {
-		const config = vscode.workspace.getConfiguration('emberTestRunner');
-		const testRunnerBaseUrl = config.get('testRunnerBaseUrl', 'http://localhost:4200/tests');
+		const config = vscode.workspace.getConfiguration('auditBoardEmberTestRunner');
+		const testRunnerBaseUrl = config.get('testRunnerBaseUrl', 'https://localhost:4200/tests');
 		const hidePassed = config.get('hidePassed', true);
 		const includeFile = config.get('includeFile', true);
 		const fileName = filePath.split('/').pop() || '';
@@ -295,7 +295,8 @@ class EmberTestCodeLensProvider implements vscode.CodeLensProvider {
 
 	private findModulesInText(text: string): { name: string; position: number }[] {
 		const moduleMatches: { name: string; position: number }[] = [];
-		const moduleRegex = /module\s*\(\s*['"`]([^'"`]+)['"`]/g;
+		// Handle type parameters: module('...'), module<Type>('...')
+		const moduleRegex = /module\s*(?:<[^>]+>)?\s*\(\s*['"`]([^'"`]+)['"`]/g;
 		let match;
 		
 		while ((match = moduleRegex.exec(text)) !== null) {
@@ -317,8 +318,9 @@ class EmberTestCodeLensProvider implements vscode.CodeLensProvider {
 
 	private findTestsInText(text: string): { name: string; position: number }[] {
 		const testMatches: { name: string; position: number }[] = [];
-		// More flexible regex to handle various whitespace and formatting
-		const testRegex = /test\s*\(\s*['"`]([^'"`]+)['"`]/gm;
+		// More flexible regex to handle various whitespace, formatting, and type parameters
+		// Matches: test('...'), test<Type>('...'), test <Type> ('...')
+		const testRegex = /test\s*(?:<[^>]+>)?\s*\(\s*['"`]([^'"`]+)['"`]/gm;
 		let match;
 		
 		while ((match = testRegex.exec(text)) !== null) {
@@ -334,8 +336,8 @@ class EmberTestCodeLensProvider implements vscode.CodeLensProvider {
 		if (debugMode) {
 			log(`Test regex found ${testMatches.length} matches`, 'debug');
 			// Let's also try to see what the text looks like around test calls
-			const testLines = text.split('\n').filter(line => line.includes('test('));
-			log(`Lines containing 'test(': ${testLines.length}`, 'debug');
+			const testLines = text.split('\n').filter(line => line.includes('test(') || line.includes('test<'));
+			log(`Lines containing 'test(' or 'test<': ${testLines.length}`, 'debug');
 			testLines.forEach((line, i) => log(`  Line ${i}: ${line.trim()}`, 'debug'));
 		}
 		

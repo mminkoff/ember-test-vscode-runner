@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/chunfat/ember-test-vscode-runner.git"
   },
-  "version": "0.0.3",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.104.0"
   },
@@ -34,22 +34,22 @@
     "configuration": {
       "title": "AuditBoard Ember Test Runner",
       "properties": {
-        "emberTestRunner.debug": {
+        "auditBoardEmberTestRunner.debug": {
           "type": "boolean",
           "default": false,
           "description": "Enable debug mode for the Ember Test Runner"
         },
-        "emberTestRunner.testRunnerBaseUrl": {
+        "auditBoardEmberTestRunner.testRunnerBaseUrl": {
           "type": "string",
-          "default": "http://localhost:9002/tests/index.html",
+          "default": "https://localhost:9002/tests",
           "description": "Base URL for the AuditBoard Ember test runner"
         },
-        "emberTestRunner.hidePassed": {
+        "auditBoardEmberTestRunner.hidePassed": {
           "type": "boolean",
           "default": true,
           "description": "Add 'hidepassed' query parameter to hide passing tests in the test runner"
         },
-        "emberTestRunner.includeFile": {
+        "auditBoardEmberTestRunner.includeFile": {
           "type": "boolean",
           "default": true,
           "description": "Add 'file' query parameter with the test file name to the test runner URL"

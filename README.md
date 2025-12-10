@@ -33,8 +33,8 @@ Tests will open in your default browser using the configured test runner URL.
 
 This extension contributes the following settings:
 
-- `emberTestRunner.debug`: Enable/disable debug mode
-- `emberTestRunner.testRunnerBaseUrl`: Configure the base URL for the test runner (default: `http://localhost:4200/tests`)
+- `auditBoardEmberTestRunner.debug`: Enable/disable debug mode
+- `auditBoardEmberTestRunner.testRunnerBaseUrl`: Configure the base URL for the test runner (default: `http://localhost:4200/tests`)
 
 You can also toggle debug mode by running the command:
 
